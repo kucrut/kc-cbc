@@ -103,8 +103,22 @@ class kcCBC {
 
 
 	public static function modify_query( $query ) {
-		if ( $query->is_main_query() )
-		$query->set( 'kc-cbc', self::$data['country']->slug );
+		if ( !$query->is_main_query() )
+			return;
+
+		if ( !defined('KC_CBC_INCLUSIVE') )
+			define( 'KC_CBC_INCLUSIVE', true );
+
+		$qv =& $query->query_vars;
+		if ( !isset($qv['tax_query']) )
+			$qv['tax_query'] = array();
+
+		$qv['tax_query'][] = array(
+			'taxonomy' => 'kc-cbc',
+			'field'    => 'slug',
+			'terms'    => self::$data['country']->slug,
+			'operator' => KC_CBC_INCLUSIVE ? 'IN' : 'NOT IN'
+		);
 	}
 
 
