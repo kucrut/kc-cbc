@@ -50,9 +50,7 @@ class kcCBC {
 		if ( !defined('KC_CBC_IP') )
 			define( 'KC_CBC_IP', '180.246.211.195' );
 
-		if ( is_admin() )
-			self::init_back();
-		else
+		if ( !is_admin() )
 			self::init_front();
 	}
 
@@ -89,10 +87,6 @@ class kcCBC {
 			foreach ( $country_names as $idx => $name )
 				wp_insert_term( $name, 'kc-cbc', array( 'slug' => strtolower($country_codes[$idx]) ) );
 		}
-	}
-
-
-	public static function init_back() {
 	}
 
 
