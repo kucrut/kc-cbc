@@ -23,14 +23,10 @@ class kcCBC {
 
 
 	public static function setup() {
-		$paths = self::_paths( __FILE__ );
-		if ( !is_array($paths) )
-			return false;
-
-		self::$data['paths'] = $paths;
-		require_once "{$paths['inc']}/helpers.php";
+		$dir = self::$data['dir'] = dirname( __FILE__ ) . '/kc-cbc-inc';
+		require_once "{$dir}/helpers.php";
 		if ( !class_exists('GeoIP') )
-			require_once self::$data['paths']['inc'] . '/geoip.inc';
+			require_once "{$dir}/geoip.inc";
 
 		add_action( 'init', array(__CLASS__, 'init'), 19 );
 	}
@@ -93,7 +89,7 @@ class kcCBC {
 	public static function init_front() {
 		$ip = KC_CBC_DEBUG ? KC_CBC_IP : $_SERVER['REMOTE_ADDR'];
 
-		$_gi = geoip_open( self::$data['paths']['inc'] . '/GeoIP.dat',  GEOIP_STANDARD );
+		$_gi = geoip_open( self::$data['dir'] . '/GeoIP.dat',  GEOIP_STANDARD );
 		$country = self::$data['country'] = get_term_by( 'slug', strtolower( geoip_country_code_by_addr( $_gi, $ip ) ), 'kc-cbc' );
 		geoip_close( $_gi );
 
@@ -119,49 +115,6 @@ class kcCBC {
 			'terms'    => self::$data['country']->slug,
 			'operator' => KC_CBC_INCLUSIVE ? 'IN' : 'NOT IN'
 		);
-	}
-
-
-	/**
-	 * Set plugin paths
-	 */
-	private static function _paths( $file, $inc_suffix = '-inc' ) {
-		if ( !file_exists($file) )
-			return false;
-
-		$file_info = pathinfo( $file );
-		$file_info['parent'] = basename( $file_info['dirname'] );
-		$locations = array(
-			'plugins'    => array( WP_PLUGIN_DIR, plugins_url() ),
-			'mu-plugins' => array( WPMU_PLUGIN_DIR, WPMU_PLUGIN_URL ),
-			'themes'     => array( get_theme_root(), get_theme_root_uri() )
-		);
-
-		$valid = false;
-		foreach ( $locations as $key => $loc ) {
-			$dir = $loc[0];
-			if ( $file_info['parent'] != $key )
-			$dir .= "/{$file_info['parent']}";
-			if ( file_exists($dir) && is_dir( $dir ) ) {
-				$valid = true;
-				break;
-			}
-		}
-		if ( !$valid )
-			return false;
-
-		$paths = array();
-		$url = "{$locations[$key][1]}/{$file_info['parent']}";
-		$inc_prefix = "{$file_info['filename']}{$inc_suffix}";
-
-		$paths['file']    = $file;
-		$paths['p_file']  = kc_plugin_file( $file );
-		$paths['inc']     = "{$dir}/{$inc_prefix}";
-		$paths['url']     = $url;
-		$paths['scripts'] = "{$url}/{$inc_prefix}/scripts";
-		$paths['styles']  = "{$url}/{$inc_prefix}/styles";
-
-		return $paths;
 	}
 
 
