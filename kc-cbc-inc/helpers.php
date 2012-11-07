@@ -25,6 +25,3 @@ function kc_array_multi_get_value( $array, $keys ) {
 	return $array[$key];
 }
 }
-
-?>
-

@@ -2,7 +2,7 @@
 
 /**
  * @package KC_CBC
- * @version 0.1
+ * @version 0.1.1
  */
 
 
@@ -10,7 +10,7 @@
 Plugin name: KC Content by Country
 Plugin URI: http://kucrut.org/
 Description: Filter contents based on visitor's country by using custom taxonomy.
-Version: 0.1
+Version: 0.1.1
 Author: Dzikri Aziz
 Author URI: http://kucrut.org/
 License: GPL v2
@@ -128,5 +128,3 @@ class kcCBC {
 	}
 }
 add_action( 'plugins_loaded', array('kcCBC', 'setup') );
-
-?>
